@@ -1,0 +1,190 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.westwing.cucumber.framework</groupId>
+	<artifactId>automation-westwingnow</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jre.level>1.8</jre.level>
+		<jdk.level>1.8</jdk.level>
+		<timestamp>${maven.build.timestamp}</timestamp>
+		<maven.build.timestamp.format>ddMMyyyyHHmmss</maven.build.timestamp.format>
+		<BROWSER>Chrome</BROWSER>
+		<TEST_ENV>Dev</TEST_ENV>
+		<TAKE_ALL_SCREENSHOTS>false(Only failed cases screenshots)</TAKE_ALL_SCREENSHOTS>
+		<dataproviderthreadcount>1</dataproviderthreadcount>
+		<io.cucumber.version>6.10.4</io.cucumber.version>
+	</properties>
+	<build>
+		<resources>
+			<resource>
+				<directory>src/test/resources</directory>
+				<includes>
+					<include>configuration/</include>
+					<include>feature_files/</include>
+					<!-- <include>TestSuite/</include> -->
+				</includes>
+			</resource>
+		</resources>
+		<pluginManagement>
+			<plugins>
+			
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.8.1</version>
+					<executions>
+						<execution>
+							<phase>test-compile</phase>
+							<goals>
+								<goal>testCompile</goal>
+							</goals>
+						</execution>
+					</executions>
+					<configuration>
+						<source>${jdk.level}</source>
+						<target>${jdk.level}</target>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-failsafe-plugin</artifactId>
+					<version>3.0.0-M4</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>integration-test</goal>
+							</goals>
+							<configuration>
+								<suiteXmlFiles>
+									<suiteXmlFile>src/test/resources/testNGSuites/Suite.xml</suiteXmlFile>
+								</suiteXmlFiles>
+								<includes>
+									<include>src/test/java/utilities/CucumberRunner.java</include>
+								</includes>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>net.masterthought</groupId>
+					<artifactId>maven-cucumber-reporting</artifactId>
+					<version>5.3.0</version>
+					<executions>
+						<execution>
+							<id>execution</id>
+							<phase>verify</phase>
+							<goals>
+								<goal>generate</goal>
+							</goals>
+							<configuration>
+								<projectName>Automation BDD UI Framwork</projectName>
+								<outputDirectory>ProjectReports/cucumberCustomizedReport-${timestamp}</outputDirectory>
+								<inputDirectory>${project.build.directory}</inputDirectory>
+								<jsonFiles>
+									<!-- supports wildcard or name pattern -->
+									<param>**/*.json</param>
+								</jsonFiles>
+								<skip>false</skip>
+								<parallelTesting>false</parallelTesting>
+								<!-- optional, set true to group features by its Ids -->
+								<mergeFeaturesById>false</mergeFeaturesById>
+								<!-- optional, set true to get a final report with latest results 
+									of the same test from different test runs -->
+								<mergeFeaturesWithRetest>false</mergeFeaturesWithRetest>
+								<!-- optional, set true to fail build on test failures -->
+								<checkBuildResult>false</checkBuildResult>
+								<classificationDirectory>src/test/resources/configuration</classificationDirectory>
+								<!-- <classificationFiles> <param>global.properties</param> </classificationFiles> -->
+								<classifications>
+									<platform>${os.name}</platform>
+									<browser>${BROWSER}</browser>
+									<testEnvironment>${TEST_ENV}</testEnvironment>
+									<maxParallelThreads>${dataproviderthreadcount}</maxParallelThreads>
+									<takeAllScreenshots>${TAKE_ALL_SCREENSHOTS}</takeAllScreenshots>
+								</classifications>
+								<buildNumber>${project.version}</buildNumber>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-java</artifactId>
+			<version>${io.cucumber.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-core</artifactId>
+			<version>${io.cucumber.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-testng</artifactId>
+			<version>${io.cucumber.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-junit</artifactId>
+			<version>${io.cucumber.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/io.cucumber/cucumber-picocontainer -->
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-picocontainer</artifactId>
+			<version>${io.cucumber.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-server -->
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-server</artifactId>
+			<version>3.141.59</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.testng/testng -->
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>7.4.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.13.2</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/io.github.bonigarcia/webdrivermanager -->
+		<dependency>
+			<groupId>io.github.bonigarcia</groupId>
+			<artifactId>webdrivermanager</artifactId>
+			<version>4.4.3</version>
+		</dependency>
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<version>4.4.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.mashape.unirest</groupId>
+			<artifactId>unirest-java</artifactId>
+			<version>1.4.9</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/log4j/log4j -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
+	</dependencies>
+</project>
